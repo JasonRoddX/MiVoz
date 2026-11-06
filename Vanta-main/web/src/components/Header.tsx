@@ -1,0 +1,136 @@
+"use client";
+
+import { Moon, Sun, RefreshCw, HelpCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+
+export function Header({ 
+  onReset, 
+  onStartTour,
+  id
+}: { 
+  onReset?: () => void;
+  onStartTour?: () => void;
+  id?: string;
+}) {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("vanta-theme");
+    if (stored === "dark") {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    } else if (stored === "light") {
+      setIsDark(false);
+      document.documentElement.classList.remove("dark");
+    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  const toggleDark = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("vanta-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("vanta-theme", "light");
+    }
+  };
+
+  return (
+    <header id={id} className="px-8 py-2 flex items-center justify-between bg-transparent border-b border-[var(--border-main)]/30">
+      <motion.div 
+        whileHover="hover"
+        className="flex items-center gap-3 cursor-default group"
+      >
+          <motion.div 
+            variants={{
+              hover: { 
+                scale: 1.1
+              }
+            }}
+            className="w-12 h-12 flex items-center justify-center"
+          >
+            <svg 
+              width="40" 
+              height="40" 
+              viewBox="0 0 100 100" 
+              className="transition-transform duration-300 group-hover:rotate-[-5deg]"
+            >
+              {/* Refined V-Wave Logo */}
+              <path 
+                d="M10 20 L50 90 L90 20" 
+                fill="none" 
+                stroke="var(--text-main)" 
+                strokeWidth="12" 
+                strokeLinecap="butt" 
+                strokeLinejoin="miter"
+              />
+              {/* Straight Symmetrical Audio Bars */}
+              <rect x="32" y="20" width="6" height="20" rx="3" fill="var(--text-main)" opacity="0.3" />
+              <rect x="41" y="10" width="6" height="50" rx="3" fill="var(--text-main)" opacity="0.6" />
+              <rect x="50" y="0" width="6" height="80" rx="3" fill="var(--text-main)" />
+              <rect x="59" y="10" width="6" height="50" rx="3" fill="var(--text-main)" opacity="0.6" />
+              <rect x="68" y="20" width="6" height="20" rx="3" fill="var(--text-main)" opacity="0.3" />
+            </svg>
+          </motion.div>
+          <span className="text-[32px] font-black tracking-[0.1em] text-[var(--text-main)] uppercase leading-none">
+            VANTA
+          </span>
+      </motion.div>
+
+      <div className="flex items-center gap-2">
+        <motion.button 
+          whileHover={{ 
+            scale: 1.1, 
+            rotate: 10,
+            backgroundColor: "rgba(255, 191, 0, 0.15)",
+            color: "#FFBF00"
+          }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onStartTour}
+          className="vanta-btn w-10 h-10 flex items-center justify-center transition-colors"
+          aria-label="Start guided tour"
+          title="How to use Vanta"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </motion.button>
+
+        <motion.button 
+          whileHover={{ 
+            scale: 1.1, 
+            rotate: -45,
+            backgroundColor: "rgba(0, 217, 255, 0.15)",
+            color: "#00D9FF"
+          }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onReset}
+          className="vanta-btn w-10 h-10 flex items-center justify-center transition-colors"
+          aria-label="Reset session"
+          title="Clear all inputs and results"
+        >
+          <RefreshCw className="h-5 w-5" />
+        </motion.button>
+
+        <motion.button 
+          whileHover={{ 
+            scale: 1.1, 
+            rotate: 15,
+            backgroundColor: isDark ? "rgba(255, 140, 0, 0.15)" : "rgba(79, 70, 229, 0.15)",
+            color: isDark ? "#FF8C00" : "#4F46E5"
+          }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleDark}
+          className="vanta-btn w-10 h-10 flex items-center justify-center transition-colors"
+          aria-label="Toggle dark mode"
+        >
+          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </motion.button>
+      </div>
+    </header>
+  );
+}
